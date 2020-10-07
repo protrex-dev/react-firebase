@@ -42,18 +42,12 @@ const mockFirebase = {
   auth: () => mockAuth
 };
 
-const Provider = ({ children }) => (
-  <FirebaseAppProvider firebaseApp={(mockFirebase as any) as firebase.app.App}>
-    {children}
-  </FirebaseAppProvider>
-);
+const Provider = ({ children }) => <FirebaseAppProvider firebaseApp={(mockFirebase as any) as firebase.app.App}>{children}</FirebaseAppProvider>;
 
 const Component = (props?: { children?: any }) => (
   <Provider>
     <React.Suspense fallback={'loading'}>
-      <AuthCheck fallback={<h1 data-testid="signed-out">not signed in</h1>}>
-        {props?.children || <h1 data-testid="signed-in">signed in</h1>}
-      </AuthCheck>
+      <AuthCheck fallback={<h1 data-testid="signed-out">not signed in</h1>}>{props?.children || <h1 data-testid="signed-in">signed in</h1>}</AuthCheck>
     </React.Suspense>
   </Provider>
 );
@@ -79,10 +73,7 @@ describe('AuthCheck', () => {
     expect(() =>
       render(
         <React.Suspense fallback={'loading'}>
-          <AuthCheck
-            fallback={<h1>not signed in</h1>}
-            auth={(mockFirebase.auth() as unknown) as auth.Auth}
-          >
+          <AuthCheck fallback={<h1>not signed in</h1>} auth={(mockFirebase.auth() as unknown) as auth.Auth}>
             {'signed in'}
           </AuthCheck>
         </React.Suspense>

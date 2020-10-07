@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import './app.css';
-import { FirebaseAppProvider } from 'reactfire';
+import { FirebaseAppProvider } from '@protrex/react-firebase';
 import 'firebase/performance';
 
 const config = {

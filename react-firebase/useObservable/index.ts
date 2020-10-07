@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Observable } from 'rxjs';
 import { SuspenseSubject } from './SuspenseSubject';
 
-const PRELOADED_OBSERVABLES = '_reactFirePreloadedObservables';
+const PRELOADED_OBSERVABLES = '_reactFirebasePreloadedObservables';
 const DEFAULT_TIMEOUT = 30_000;
 
 // Since we're side-effect free, we need to ensure our observable cache is global

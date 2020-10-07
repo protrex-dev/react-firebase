@@ -1,11 +1,8 @@
 import React from 'react';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import { SuspenseWithPerf, useUser, useAuth } from 'reactfire';
+import { SuspenseWithPerf, useUser, useAuth } from '@protrex/react-firebase';
 
-const signOut = auth =>
-  auth
-    .signOut()
-    .then(() => console.log('signed out'));
+const signOut = auth => auth.signOut().then(() => console.log('signed out'));
 
 const UserDetails = ({ user }) => {
   const auth = useAuth();
@@ -46,10 +43,7 @@ const FirebaseAuthStateButton = () => {
 
 const AuthButton = props => {
   return (
-    <SuspenseWithPerf
-      traceId={'firebase-user-wait'}
-      fallback={<p>loading...</p>}
-    >
+    <SuspenseWithPerf traceId={'firebase-user-wait'} fallback={<p>loading...</p>}>
       <FirebaseAuthStateButton />
     </SuspenseWithPerf>
   );

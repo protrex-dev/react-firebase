@@ -1,5 +1,5 @@
 {
-  "name": "reactfire-dev",
+  "name": "@protrex/react-firebase-dev",
   "version": "2.0.0",
   "description": "Firebase library for React",
   "main": "index.js",
@@ -10,20 +10,20 @@
     "test-dev": "jest --verbose --watch",
     "emulators": "firebase emulators:start --only firestore,database",
     "test": "yarn build && firebase emulators:exec --only firestore,database \"jest --rootDir pub --no-cache --verbose --detectOpenHandles --forceExit\"",
-    "copy-package-json": "shx cp package.pub.json pub/reactfire/package.json",
+    "copy-package-json": "shx cp package.pub.json pub/react-firebase/package.json",
     "watch": "yarn build && tsc --watch",
-    "build": "shx rm -rf pub && tsc && yarn copy-package-json && shx cp ../README.md pub/reactfire/README.md && shx cp ../LICENSE pub/reactfire/LICENSE && rollup -c && node after.build.js && shx cp ./.npmignore pub/reactfire/ && npm pack ./pub/reactfire"
+    "build": "shx rm -rf pub && tsc && yarn copy-package-json && shx cp ../README.md pub/react-firebase/README.md && shx cp ../LICENSE pub/react-firebase/LICENSE && rollup -c && node after.build.js && shx cp ./.npmignore pub/react-firebase/ && npm pack ./pub/react-firebase"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Firebase/reactfire.git"
+    "url": "git+https://github.com/protrex-dev/react-firebase.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Firebase/reactfire/issues"
+    "url": "https://github.com/protrex-dev/react-firebase/issues"
   },
-  "homepage": "https://firebaseopensource.com/projects/firebase/reactfire/",
+  "homepage": "https://firebaseopensource.com/projects/firebase/react-firebase/",
   "dependencies": {
     "rxfire": "^3.6.6",
     "rxjs": "^6.4.0"

@@ -1,4 +1,4 @@
-# See go/reactfire-releasing for details on the ReactFire release process.
+# See go/react-firebase-releasing for details on the ReactFirebase release process.
 # If you need to trigger a release manually, be sure to use substitutions like so:
 #   @canary `gcloud builds submit --substitutions=SHORT_SHA="9b0a0b0"`
 #   @next   `gcloud builds submit --substitutions=TAG_NAME="v1.2.3-rc.1"`
@@ -14,7 +14,7 @@ steps:
     secretEnv: ['NPM_TOKEN']
 
 secrets:
-  - kmsKeyName: projects/reactfire/locations/global/keyRings/cloud-build/cryptoKeys/cloud-build
+  - kmsKeyName: projects/react-firebase/locations/global/keyRings/cloud-build/cryptoKeys/cloud-build
     secretEnv:
       NPM_TOKEN: CiQADamFn5XzbeNQgzTGST9r3Tp5skWlDbBiWaZljffgEm0yIxYSTQC1QbtmDtScXx1BPE+d3CP9rXvOY+n5J0XRuLTTqN7RaqyipCEqTi7+z1kI6mKyBo2ilsMtOtngNzbOZ8kZeUDA80ISLWrNs0hF8k78
 

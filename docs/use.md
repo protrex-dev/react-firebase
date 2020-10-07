@@ -1,4 +1,4 @@
-# Using ReactFire
+# Using ReactFirebase
 
 - [Access your `firebase` app from any component](#access-your-firebase-app-from-any-component)
 - [Access the current user](#access-the-current-user)
@@ -17,7 +17,7 @@
 
 ## Access your `firebase` app from any component
 
-Since ReactFire uses React's Context API, any component under a `FirebaseAppProvider` can use `useFirebaseApp()` to get your initialized app. Plus, all ReactFire hooks will automatically check context to see if a firebase app is available.
+Since ReactFirebase uses React's Context API, any component under a `FirebaseAppProvider` can use `useFirebaseApp()` to get your initialized app. Plus, all ReactFirebase hooks will automatically check context to see if a firebase app is available.
 
 ```jsx
 // ** INDEX.JS **
@@ -45,7 +45,7 @@ function MyComponent(props) {
 
 ## Access the current user
 
-The `useUser()` hook returns the currently signed-in [user](https://firebase.google.com/docs/reference/js/firebase.User). Like the other ReactFire Hooks, you need to wrap it in `Suspense` or provide a `startWithValue`.
+The `useUser()` hook returns the currently signed-in [user](https://firebase.google.com/docs/reference/js/firebase.User). Like the other ReactFirebase Hooks, you need to wrap it in `Suspense` or provide a `startWithValue`.
 
 ```jsx
 function HomePage(props) {
@@ -73,7 +73,7 @@ render(
 ## Log Page Views to Google Analytics for Firebase with React Router
 
 ```jsx
-import { useAnalytics } from 'reactfire';
+import { useAnalytics } from '@protrex/react-firebase';
 import { Router, Route, Switch } from 'react-router';
 
 function MyPageViewLogger({ location }) {
@@ -113,7 +113,7 @@ import {
   useUser,
   useAuth,
   useFirestore
-} from 'reactfire';
+} from '@protrex/react-firebase';
 
 const DEFAULT_IMAGE_PATH = 'userPhotos/default.jpg';
 
@@ -178,7 +178,7 @@ function ProfilePage() {
 
 ## Manage Loading States
 
-ReactFire is designed to integrate with React's Suspense API, but also supports use cases where Suspense isn't needed or wanted.
+ReactFirebase is designed to integrate with React's Suspense API, but also supports use cases where Suspense isn't needed or wanted.
 
 ### Default: `Suspense`
 
@@ -188,7 +188,7 @@ Say we have a component called `Burrito` that uses `useFirestoreDoc`:
 function Burrito() {
   const firebaseApp = useFirestore();
   const burritoRef = firestore()
-    .collection('tryreactfire')
+    .collection('tryreactfirebase')
     .doc('burrito');
 
   // subscribe to the doc. just one line!
@@ -216,15 +216,12 @@ function FoodRatings() {
 
 #### Bonus: `SuspenseWithPerf`
 
-ReactFire provides an a wrapper around `Suspense` called `SuspenseWithPerf` that instruments your `Suspense` loads with a Firebase Performance Monitoring custom trace. It looks like this:
+ReactFirebase provides an a wrapper around `Suspense` called `SuspenseWithPerf` that instruments your `Suspense` loads with a Firebase Performance Monitoring custom trace. It looks like this:
 
 ```jsx
 function FoodRatings() {
   return (
-    <SuspenseWithPerf
-      fallback={'loading burrito status...'}
-      traceId={'load-burrito-status'}
-    >
+    <SuspenseWithPerf fallback={'loading burrito status...'} traceId={'load-burrito-status'}>
       <Burrito />
     </SuspenseWithPerf>
   );
@@ -233,14 +230,14 @@ function FoodRatings() {
 
 ### Don't want Suspense? Provide an initial value
 
-What if we don't want to use Suspense, or we're server rendering and we know what the initial value should be? In that case we can provide an initial value to any ReactFire hook:
+What if we don't want to use Suspense, or we're server rendering and we know what the initial value should be? In that case we can provide an initial value to any ReactFirebase hook:
 
 ```jsx
 function Burrito() {
   const firebaseApp = useFirebaseApp();
   const burritoRef = firebaseApp
     .firestore()
-    .collection('tryreactfire')
+    .collection('tryreactfirebase')
     .doc('burrito');
 
   // subscribe to the doc. just one line!
@@ -268,20 +265,20 @@ function FoodRatings() {
 
 ### Solve `Warning: App triggered a user-blocking update that suspended.` with useTransition
 
-This warning can be solved with React's `useTransition` hook. Check out the sample code's Firestore example to see how to use this with ReactFire:
+This warning can be solved with React's `useTransition` hook. Check out the sample code's Firestore example to see how to use this with ReactFirebase:
 
-https://github.com/FirebaseExtended/reactfire/blob/c67dfa755431c15034f0c713b9df3864fb762c06/sample/src/Firestore.js#L87-L121
+https://github.com/protrex-dev/react-firebase/blob/c67dfa755431c15034f0c713b9df3864fb762c06/sample/src/Firestore.js#L87-L121
 
 ## Lazy Load the Firebase SDKs
 
-Including the Firebase SDKs in your main JS bundle (by using `import 'firebase/firestore'`, for example) will increase your bundle size. To get around this, you can lazy load the Firebase SDK with ReactFire. As long as a component has a parent that is a `FirebaseAppProvider`, you can use an SDK hook (`useFirestore`, `useDatabase`, `useAuth`, `useStorage`) like so:
+Including the Firebase SDKs in your main JS bundle (by using `import 'firebase/firestore'`, for example) will increase your bundle size. To get around this, you can lazy load the Firebase SDK with ReactFirebase. As long as a component has a parent that is a `FirebaseAppProvider`, you can use an SDK hook (`useFirestore`, `useDatabase`, `useAuth`, `useStorage`) like so:
 
 `MyComponent.jsx`
 
 ```jsx
 import React from 'react';
 // WE ARE NOT IMPORTING THE FIRESTORE SDK UP HERE
-import { useFirestoreDocData, useFirestore } from 'reactfire';
+import { useFirestoreDocData, useFirestore } from '@protrex/react-firebase';
 
 export function MyComponent(props) {
   // automatically lazy loads the Cloud Firestore SDK
@@ -296,7 +293,7 @@ export function MyComponent(props) {
 
 ## The _render-as-you-fetch_ pattern
 
-The [React docs](https://reactjs.org/docs/concurrent-mode-suspense.html#approach-3-render-as-you-fetch-using-suspense) recommend kicking off reads as early as possible in order to reduce perceived load times. ReactFire offers a number of `preload` methods to help you do this.
+The [React docs](https://reactjs.org/docs/concurrent-mode-suspense.html#approach-3-render-as-you-fetch-using-suspense) recommend kicking off reads as early as possible in order to reduce perceived load times. ReactFirebase offers a number of `preload` methods to help you do this.
 
 ### Preload an SDK
 
@@ -314,8 +311,8 @@ preloadFirestore({
 
 ### Preload Data
 
-ReactFire's data fetching hooks don't fully support preloading yet. The experimental `preloadFirestoreDoc` function allows you to subscribe to a Firestore document if you know you call `useFirestoreDoc` somewhere farther down the component tree.
+ReactFirebase's data fetching hooks don't fully support preloading yet. The experimental `preloadFirestoreDoc` function allows you to subscribe to a Firestore document if you know you call `useFirestoreDoc` somewhere farther down the component tree.
 
 ## Advanced: Using RxJS observables to combine multiple data sources
 
-All ReactFire hooks are powered by [`useObservable`](./reference.md#useObservable). By calling `useObservable` directly, you can subscribe to any observable in the same manner as the built-in ReactFire hooks. If you use [RxFire](https://github.com/firebase/firebase-js-sdk/tree/master/packages/rxfire#rxfire) and `useObservable` together, you can accomplish more advanced read patterns (like [OR queries in Firestore](https://stackoverflow.com/a/53497072/4816918)!).
+All ReactFirebase hooks are powered by [`useObservable`](./reference.md#useObservable). By calling `useObservable` directly, you can subscribe to any observable in the same manner as the built-in ReactFirebase hooks. If you use [RxFire](https://github.com/firebase/firebase-js-sdk/tree/master/packages/rxfire#rxfire) and `useObservable` together, you can accomplish more advanced read patterns (like [OR queries in Firestore](https://stackoverflow.com/a/53497072/4816918)!).

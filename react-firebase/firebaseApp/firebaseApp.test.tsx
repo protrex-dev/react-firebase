@@ -29,18 +29,13 @@ describe('FirebaseAppProvider', () => {
 
     spy.mockRestore();
   });
-
 });
 
 describe('useFirebaseApp', () => {
   it('finds firebase from Context', () => {
     const firebaseApp: firebase.app.App = { a: 1 } as any;
 
-    const wrapper = ({ children }) => (
-      <FirebaseAppProvider firebaseApp={firebaseApp}>
-        {children}
-      </FirebaseAppProvider>
-    );
+    const wrapper = ({ children }) => <FirebaseAppProvider firebaseApp={firebaseApp}>{children}</FirebaseAppProvider>;
 
     const { result } = renderHook(() => useFirebaseApp(), { wrapper });
     expect(result.error).toBeUndefined();
@@ -54,9 +49,7 @@ describe('useFirebaseApp', () => {
 
     const wrapper = ({ children }) => (
       <div>
-        <FirebaseAppProvider firebaseConfig={DEFAULT_APP_CONFIG}>
-          {children}
-        </FirebaseAppProvider>
+        <FirebaseAppProvider firebaseConfig={DEFAULT_APP_CONFIG}>{children}</FirebaseAppProvider>
         <FirebaseAppProvider firebaseConfig={config} appName="app-2">
           appA
         </FirebaseAppProvider>
@@ -78,9 +71,7 @@ describe('useFirebaseApp', () => {
 
     const wrapper = ({ children }) => (
       <div>
-        <FirebaseAppProvider firebaseConfig={DEFAULT_APP_CONFIG}>
-          {children}
-        </FirebaseAppProvider>
+        <FirebaseAppProvider firebaseConfig={DEFAULT_APP_CONFIG}>{children}</FirebaseAppProvider>
         <FirebaseAppProvider firebaseConfig={config}>appA</FirebaseAppProvider>
       </div>
     );
@@ -89,9 +80,7 @@ describe('useFirebaseApp', () => {
       const { result } = renderHook(() => useFirebaseApp(), { wrapper });
       fail('expected a throw');
     } catch (e) {
-      expect(e).toEqual(
-        'Does not match the options already provided to the default firebase app instance, give this new instance a different appName.'
-      );
+      expect(e).toEqual('Does not match the options already provided to the default firebase app instance, give this new instance a different appName.');
     }
 
     expect(initializeApp).not.toBeCalled();
@@ -105,10 +94,8 @@ describe('useFirebaseApp', () => {
   });
 });
 
-describe('reactfire version', () => {
-
+describe('@protrex/react-firebase version', () => {
   it(`should match ${pkg.version}`, () => {
     expect(pkg.version).toEqual(version);
   });
-
-})
+});

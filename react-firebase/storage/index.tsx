@@ -2,7 +2,7 @@ import { storage } from 'firebase/app';
 import * as React from 'react';
 import { getDownloadURL } from 'rxfire/storage';
 import { Observable } from 'rxjs';
-import { ReactFireOptions, useObservable } from '..';
+import { ReactFirebaseOptions, useObservable } from '..';
 import { useStorage } from '../firebaseApp';
 
 /**
@@ -33,7 +33,11 @@ function _fromTask(task: storage.UploadTask) {
  * @param ref - reference to the blob the task is acting on
  * @param options
  */
-export function useStorageTask<T = unknown>(task: storage.UploadTask, ref: storage.Reference, options?: ReactFireOptions<T>): storage.UploadTaskSnapshot | T {
+export function useStorageTask<T = unknown>(
+  task: storage.UploadTask,
+  ref: storage.Reference,
+  options?: ReactFirebaseOptions<T>
+): storage.UploadTaskSnapshot | T {
   return useObservable(_fromTask(task), `storage:task:${ref.toString()}`, options ? options.startWithValue : undefined);
 }
 
@@ -43,7 +47,7 @@ export function useStorageTask<T = unknown>(task: storage.UploadTask, ref: stora
  * @param ref - reference to the blob you want to download
  * @param options
  */
-export function useStorageDownloadURL<T = string>(ref: storage.Reference, options?: ReactFireOptions<T>): string | T {
+export function useStorageDownloadURL<T = string>(ref: storage.Reference, options?: ReactFirebaseOptions<T>): string | T {
   return useObservable(getDownloadURL(ref), `storage:downloadUrl:${ref.toString()}`, options ? options.startWithValue : undefined);
 }
 

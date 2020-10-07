@@ -5,23 +5,25 @@ const { version } = require('./package.json');
 // This script should only ever be ran after
 // a successful rollup build.
 
-const ABSOLUTE_PATH = path.join(process.cwd(), `/pub/reactfire`);
+const ABSOLUTE_PATH = path.join(process.cwd(), `/pub/react-firebase`);
 
-const files = [{
-  name: 'firebaseApp/index.js',
-  token: '::__reactfireversion__::',
-  replaceValue: version
-}];
+const files = [
+  {
+    name: 'firebaseApp/index.js',
+    token: '::__reactfirebaseversion__::',
+    replaceValue: version
+  }
+];
 
 const fileContents = files.map(file => {
   const fullPath = path.join(ABSOLUTE_PATH, file.name);
   const content = fs.readFileSync(fullPath, 'utf8');
-  return { 
+  return {
     fullPath,
     content,
-    ...file,
+    ...file
   };
-})
+});
 
 fileContents.forEach(file => {
   const replaced = file.content.replace(file.token, file.replaceValue);

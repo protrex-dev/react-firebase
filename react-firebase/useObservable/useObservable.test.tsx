@@ -51,7 +51,7 @@ describe('useObservable', () => {
     // stop a nasty-looking console error
     // https://github.com/facebook/react/issues/11098#issuecomment-523977830
     const spy = jest.spyOn(console, 'error');
-    spy.mockImplementation(() => { });
+    spy.mockImplementation(() => {});
 
     class ErrorBoundary extends React.Component<{}, { hasError: boolean }> {
       constructor(props) {

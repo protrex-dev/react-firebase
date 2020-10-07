@@ -1,11 +1,11 @@
 import { firestore } from 'firebase/app';
 import { collectionData, doc, docData, fromCollectionRef } from 'rxfire/firestore';
-import { preloadFirestore, ReactFireOptions, useObservable, checkIdField, checkStartWithValue } from '..';
+import { preloadFirestore, ReactFirebaseOptions, useObservable, checkIdField, checkStartWithValue } from '..';
 import { preloadObservable } from '../useObservable';
 import { first } from 'rxjs/operators';
 import { useFirebaseApp } from '../firebaseApp';
 
-const CACHED_QUERIES = '_reactFireFirestoreQueryCache';
+const CACHED_QUERIES = '_reactFirebaseFirestoreQueryCache';
 
 // Since we're side-effect free, we need to ensure our observableId cache is global
 const cachedQueries: Array<firestore.Query> = globalThis[CACHED_QUERIES] || [];
@@ -45,7 +45,10 @@ export function preloadFirestoreDoc(
  * @param ref - Reference to the document you want to listen to
  * @param options
  */
-export function useFirestoreDoc<T = unknown>(ref: firestore.DocumentReference, options?: ReactFireOptions<T>): T extends {} ? T : firestore.DocumentSnapshot {
+export function useFirestoreDoc<T = unknown>(
+  ref: firestore.DocumentReference,
+  options?: ReactFirebaseOptions<T>
+): T extends {} ? T : firestore.DocumentSnapshot {
   return useObservable(doc(ref), `firestore:doc:${ref.firestore.app.name}:${ref.path}`, options ? options.startWithValue : undefined);
 }
 
@@ -57,7 +60,7 @@ export function useFirestoreDoc<T = unknown>(ref: firestore.DocumentReference, o
  */
 export function useFirestoreDocOnce<T = unknown>(
   ref: firestore.DocumentReference,
-  options?: ReactFireOptions<T>
+  options?: ReactFirebaseOptions<T>
 ): T extends {} ? T : firestore.DocumentSnapshot {
   return useObservable(doc(ref).pipe(first()), `firestore:docOnce:${ref.firestore.app.name}:${ref.path}`, checkStartWithValue(options));
 }
@@ -68,7 +71,7 @@ export function useFirestoreDocOnce<T = unknown>(
  * @param ref - Reference to the document you want to listen to
  * @param options
  */
-export function useFirestoreDocData<T = unknown>(ref: firestore.DocumentReference, options?: ReactFireOptions<T>): T {
+export function useFirestoreDocData<T = unknown>(ref: firestore.DocumentReference, options?: ReactFirebaseOptions<T>): T {
   const idField = checkIdField(options);
   return useObservable(docData(ref, idField), `firestore:docData:${ref.firestore.app.name}:${ref.path}:idField=${idField}`, checkStartWithValue(options));
 }
@@ -79,7 +82,7 @@ export function useFirestoreDocData<T = unknown>(ref: firestore.DocumentReferenc
  * @param ref - Reference to the document you want to get
  * @param options
  */
-export function useFirestoreDocDataOnce<T = unknown>(ref: firestore.DocumentReference, options?: ReactFireOptions<T>): T {
+export function useFirestoreDocDataOnce<T = unknown>(ref: firestore.DocumentReference, options?: ReactFirebaseOptions<T>): T {
   const idField = checkIdField(options);
   return useObservable(
     docData(ref, idField).pipe(first()),
@@ -96,7 +99,7 @@ export function useFirestoreDocDataOnce<T = unknown>(ref: firestore.DocumentRefe
  */
 export function useFirestoreCollection<T = { [key: string]: unknown }>(
   query: firestore.Query,
-  options?: ReactFireOptions<T[]>
+  options?: ReactFirebaseOptions<T[]>
 ): T extends {} ? T[] : firestore.QuerySnapshot {
   const queryId = `firestore:collection:${getUniqueIdForFirestoreQuery(query)}`;
   return useObservable(fromCollectionRef(query), queryId, checkStartWithValue(options));
@@ -108,7 +111,7 @@ export function useFirestoreCollection<T = { [key: string]: unknown }>(
  * @param ref - Reference to the collection you want to listen to
  * @param options
  */
-export function useFirestoreCollectionData<T = { [key: string]: unknown }>(query: firestore.Query, options?: ReactFireOptions<T[]>): T[] {
+export function useFirestoreCollectionData<T = { [key: string]: unknown }>(query: firestore.Query, options?: ReactFirebaseOptions<T[]>): T[] {
   const idField = checkIdField(options);
   const queryId = `firestore:collectionData:${getUniqueIdForFirestoreQuery(query)}:idField=${idField}`;
 

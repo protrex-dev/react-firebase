@@ -1,8 +1,8 @@
 {
   "private": true,
   "workspaces": [
-    "reactfire",
-    "reactfire/pub/reactfire",
+    "react-firebase",
+    "react-firebase/pub/react-firebase",
     "sample"
   ],
   "devDependencies": {

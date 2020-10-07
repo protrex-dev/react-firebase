@@ -8,11 +8,11 @@ node_modules/
 
 
 
-reactfire/docs/reactfire-metadata.json
-reactfire/firestore-debug.log
-reactfire/firebase-debug.log
-reactfire/pub/**
+react-firebase/docs/react-firebase-metadata.json
+react-firebase/firestore-debug.log
+react-firebase/firebase-debug.log
+react-firebase/pub/**
 pub
 yarn-error.log
-reactfire/database-debug.log
-reactfire/reactfire-*.tgz
+react-firebase/database-debug.log
+react-firebase/protrex-react-firebase-*.tgz

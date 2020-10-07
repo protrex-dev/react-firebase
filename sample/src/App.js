@@ -13,7 +13,7 @@ import {
   preloadDatabase,
   preloadStorage,
   preloadRemoteConfig
-} from 'reactfire';
+} from '@protrex/react-firebase';
 
 const Fire = () => (
   <span role="img" aria-label="Fire">
@@ -86,7 +86,7 @@ const App = () => {
   return (
     <>
       <h1>
-        <Fire /> ReactFire Demo <Fire />
+        <Fire /> ReactFirebase Demo <Fire />
       </h1>
       <div className="container">
         <Card title="Authentication">

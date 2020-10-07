@@ -1,4 +1,4 @@
-cd reactfire/pub/reactfire
+cd react-firebase/pub/react-firebase
 
 LATEST_TEST="^[^-]*$"
 
@@ -22,7 +22,7 @@ if test $NPM_TOKEN; then
         npm publish . --tag $NPM_TAG
         ret=$?
     else
-        npm version $(npm version | sed -n "s/. reactfire: '\(.*\)',/\1/p")-canary.$SHORT_SHA
+        npm version $(npm version | sed -n "s/. react-firebase: '\(.*\)',/\1/p")-canary.$SHORT_SHA
         npm publish . --tag canary
         ret=$?
     fi

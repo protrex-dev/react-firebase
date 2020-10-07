@@ -1,5 +1,5 @@
 {
-  "name": "reactfire",
+  "name": "@protrex/react-firebase",
   "version": "2.0.0",
   "description": "Firebase library for React",
   "module": "index.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FirebaseExtended/reactfire.git"
+    "url": "git+https://github.com/protrex-dev/react-firebase.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Firebase/reactfire/issues"
+    "url": "https://github.com/protrex-dev/react-firebase/issues"
   },
-  "homepage": "https://firebaseopensource.com/projects/firebaseextended/reactfire/",
+  "homepage": "https://firebaseopensource.com/projects/protrex-dev/react-firebase/",
   "dependencies": {
     "rxfire": "^3.6.3",
     "rxjs": "^6.4.0"

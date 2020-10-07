@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  AuthCheck,
-  SuspenseWithPerf,
-  useDatabaseObjectData,
-  useDatabase,
-  useDatabaseListData
-} from 'reactfire';
+import { AuthCheck, SuspenseWithPerf, useDatabaseObjectData, useDatabase, useDatabaseListData } from '@protrex/react-firebase';
 
 const Counter = props => {
   const database = useDatabase();
@@ -41,12 +35,7 @@ const AnimalEntry = ({ saveAnimal }) => {
 
   return (
     <>
-      <input
-        value={text}
-        disabled={disabled}
-        placeholder="Iguana"
-        onChange={({ target }) => setText(target.value)}
-      />
+      <input value={text} disabled={disabled} placeholder="Iguana" onChange={({ target }) => setText(target.value)} />
       <button onClick={onSave} disabled={disabled || text.length < 3}>
         Add new animal
       </button>

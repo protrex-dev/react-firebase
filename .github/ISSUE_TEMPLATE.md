@@ -7,10 +7,10 @@ Have a usage question?
 We get lots of those and we love helping you, but GitHub is not the best place for them and they
 will be closed. Here are some resources to get help:
 
-- Start with the quickstart: https://github.com/firebase/reactfire/blob/master/docs/quickstart.md
-- Go through the guide: https://github.com/firebase/reactfire/blob/master/docs/guide.md
-- Read the full API reference: https://github.com/firebase/reactfire/blob/master/docs/reference.md
-- Try out some examples: https://github.com/firebase/reactfire/blob/master/examples/README.md
+- Start with the quickstart: https://github.com/protrex-dev/react-firebase/blob/master/docs/quickstart.md
+- Go through the guide: https://github.com/protrex-dev/react-firebase/blob/master/docs/guide.md
+- Read the full API reference: https://github.com/protrex-dev/react-firebase/blob/master/docs/reference.md
+- Try out some examples: https://github.com/protrex-dev/react-firebase/blob/master/examples/README.md
 
 If the official documentation doesn't help, try asking through our official support channels:
 
@@ -33,7 +33,6 @@ workarounds straightforward? What potential bugs and edge cases does it help to 
 
 -->
 
-
 ### Version info
 
 <!-- What versions of the following libraries are you using? Note that your issue may already
@@ -43,7 +42,7 @@ be fixed in the latest versions. -->
 
 **Firebase:**
 
-**ReactFire:**
+**ReactFirebase:**
 
 **Other (e.g. Node, browser, operating system) (if applicable):**
 
@@ -52,16 +51,13 @@ be fixed in the latest versions. -->
 <!-- Provide a minimal, complete, and verifiable example (http://stackoverflow.com/help/mcve)
 using either Plunker (http://plnkr.co/) or JSFiddle (https://jsfiddle.net/). -->
 
-
 ### Steps to reproduce
 
 <!-- Provide the steps needed to reproduce the issue given the above test case. -->
 
-
 ### Expected behavior
 
 <!-- What is the expected behavior? -->
-
 
 ### Actual behavior
 

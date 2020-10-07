@@ -34,11 +34,7 @@ const PromiseThrower = () => {
   return <h1>Hello world</h1>;
 };
 
-const Provider = ({ children }) => (
-  <FirebaseAppProvider firebaseApp={mockFirebase}>
-    {children}
-  </FirebaseAppProvider>
-);
+const Provider = ({ children }) => <FirebaseAppProvider firebaseApp={mockFirebase}>{children}</FirebaseAppProvider>;
 
 describe('SuspenseWithPerf', () => {
   afterEach(() => {
@@ -68,11 +64,7 @@ describe('SuspenseWithPerf', () => {
     const SuspenseWithPerfComp = () => {
       return (
         <Provider>
-          <SuspenseWithPerf
-            fallback={<Fallback />}
-            traceId="test"
-            firePerf={mockPerf()}
-          >
+          <SuspenseWithPerf fallback={<Fallback />} traceId="test" firePerf={mockPerf()}>
             <Comp />
           </SuspenseWithPerf>
         </Provider>
@@ -101,11 +93,7 @@ describe('SuspenseWithPerf', () => {
 
     render(
       <Provider>
-        <SuspenseWithPerf
-          traceId={traceName}
-          fallback={'loading'}
-          firePerf={mockPerf()}
-        >
+        <SuspenseWithPerf traceId={traceName} fallback={'loading'} firePerf={mockPerf()}>
           <PromiseThrower />
         </SuspenseWithPerf>
       </Provider>
@@ -138,11 +126,7 @@ describe('SuspenseWithPerf', () => {
 
     const { getByTestId } = render(
       <Provider>
-        <SuspenseWithPerf
-          fallback={<Fallback />}
-          traceId="test lifecycle"
-          firePerf={mockPerf()}
-        >
+        <SuspenseWithPerf fallback={<Fallback />} traceId="test lifecycle" firePerf={mockPerf()}>
           <Comp />
         </SuspenseWithPerf>
       </Provider>
@@ -161,11 +145,7 @@ describe('SuspenseWithPerf', () => {
     expect(mark).toBeCalledWith('_test lifecycleEnd[0]');
     expect(mark).toHaveBeenCalledTimes(2);
     expect(measure).toHaveBeenCalledTimes(1);
-    expect(measure).toHaveBeenCalledWith(
-      'test lifecycle',
-      '_test lifecycleStart[0]',
-      '_test lifecycleEnd[0]'
-    );
+    expect(measure).toHaveBeenCalledWith('test lifecycle', '_test lifecycleStart[0]', '_test lifecycleEnd[0]');
   });
 
   it.todo('can find fireperf from Context');

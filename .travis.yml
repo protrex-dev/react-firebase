@@ -6,10 +6,10 @@ addons:
   apt:
     update: true
     packages:
-    - default-jre
-    - default-jdk
-    - build-essential
-    - python2.7
+      - default-jre
+      - default-jdk
+      - build-essential
+      - python2.7
 
 cache:
   yarn: true
@@ -46,5 +46,5 @@ install:
   - firebase setup:emulators:firestore
 
 script:
-  - cd reactfire
+  - cd react-firebase
   - yarn test

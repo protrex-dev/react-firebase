@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-cd reactfire
+cd react-firebase
 
 yarn
 yarn build

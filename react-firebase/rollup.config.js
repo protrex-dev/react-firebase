@@ -1,11 +1,11 @@
 import resolve from '@rollup/plugin-node-resolve';
 
 export default {
-  input: './pub/reactfire/index.js',
+  input: './pub/react-firebase/index.js',
   output: {
-    dir: './pub/reactfire/cjs',
+    dir: './pub/react-firebase/cjs',
     format: 'cjs',
-    name: 'reactfire'
+    name: '@protrex/react-firebase'
   },
   external: id => !id.startsWith('.'),
   plugins: [resolve()]

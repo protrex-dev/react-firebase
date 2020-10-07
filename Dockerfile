@@ -18,13 +18,13 @@ ENV PYTHON /usr/bin/python2.7
 
 COPY package.json /
 COPY yarn.lock /
-COPY reactfire/package.json reactfire/
+COPY react-firebase/package.json react-firebase/
 COPY sample/package.json sample/
 RUN yarn install --frozen-lockfile
 
 COPY . /
 
-RUN cd reactfire && yarn test
+RUN cd react-firebase && yarn test
 
 ARG SHORT_SHA=""
 ARG NPM_TOKEN=""

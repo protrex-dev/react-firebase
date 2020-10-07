@@ -44,7 +44,6 @@ describe('Firestore', () => {
   });
 
   describe('useFirestore', () => {
-
     it('awaits the preloadFirestore setup', async () => {
       const firebaseApp = firebase.initializeTestApp({
         projectId: '123456',
@@ -59,15 +58,13 @@ describe('Firestore', () => {
       preloadFirestore({
         // @ts-ignore: TODO: use the regular JS SDK instead of @firebase/testing
         firebaseApp,
-        setup: () => new Promise(resolve => preloadResolve = resolve)
-      }).then(() => preloadResolved = true);
+        setup: () => new Promise(resolve => (preloadResolve = resolve))
+      }).then(() => (preloadResolved = true));
 
       const Firestore = () => {
         // @ts-ignore: TODO: use the regular JS SDK instead of @firebase/testing
         const firestore = useFirestore(firebaseApp);
-        return (
-          <div data-testid="success"></div>
-        );
+        return <div data-testid="success"></div>;
       };
 
       const { getByTestId } = render(
@@ -81,14 +78,15 @@ describe('Firestore', () => {
       await waitForElement(() => getByTestId('fallback'));
       expect(preloadResolved).toEqual(false);
 
-      await waitForElement(() => getByTestId('success')).then(() => fail('expected throw')).catch(() => { });
+      await waitForElement(() => getByTestId('success'))
+        .then(() => fail('expected throw'))
+        .catch(() => {});
       expect(preloadResolved).toEqual(false);
 
       preloadResolve();
 
       await waitForElement(() => getByTestId('success'));
       expect(preloadResolved).toEqual(true);
-
     });
   });
 
@@ -106,11 +104,7 @@ describe('Firestore', () => {
       const ReadFirestoreDoc = () => {
         const doc = useFirestoreDoc(ref);
 
-        return (
-          <h1 data-testid="readSuccess">
-            {(doc as firestore.DocumentSnapshot).data().a}
-          </h1>
-        );
+        return <h1 data-testid="readSuccess">{(doc as firestore.DocumentSnapshot).data().a}</h1>;
       };
       const { getByTestId } = render(
         <FirebaseAppProvider firebase={app}>
@@ -158,9 +152,7 @@ describe('Firestore', () => {
   });
 
   describe('useFirestoreDocOnce', () => {
-    it.todo(
-      'works when the document does not exist, and does not update when it is created'
-    );
+    it.todo('works when the document does not exist, and does not update when it is created');
     /*
 
     INVESTIGATE this test is flaky
@@ -289,12 +281,8 @@ describe('Firestore', () => {
       await act(() => ref.add(mockData2));
 
       const ReadFirestoreCollection = () => {
-        const list = ((useFirestoreCollection(
-          ref
-        ) as any) as firestore.QuerySnapshot).docs;
-        const filteredList = ((useFirestoreCollection(
-          filteredRef
-        ) as any) as firestore.QuerySnapshot).docs;
+        const list = ((useFirestoreCollection(ref) as any) as firestore.QuerySnapshot).docs;
+        const filteredList = ((useFirestoreCollection(filteredRef) as any) as firestore.QuerySnapshot).docs;
 
         // filteredList's length should be 1 since we only added one value that matches its query
         expect(filteredList.length).toEqual(1);

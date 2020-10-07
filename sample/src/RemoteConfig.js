@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRemoteConfigValue, SuspenseWithPerf } from 'reactfire';
+import { useRemoteConfigValue, SuspenseWithPerf } from '@protrex/react-firebase';
 
 const RemoteConfig = props => {
   const parameter = useRemoteConfigValue(props.rcKey);
@@ -9,10 +9,7 @@ const RemoteConfig = props => {
 
 const SuspenseWrapper = props => {
   return (
-    <SuspenseWithPerf
-      traceId={'remote-config-message'}
-      fallback={<p>loading remote config</p>}
-    >
+    <SuspenseWithPerf traceId={'remote-config-message'} fallback={<p>loading remote config</p>}>
       <RemoteConfig rcKey="message" />
     </SuspenseWithPerf>
   );

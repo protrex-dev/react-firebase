@@ -8,12 +8,7 @@ export interface SuspensePerfProps {
   firePerf?: import('firebase/app').performance.Performance;
 }
 
-export function SuspenseWithPerf({
-  children,
-  traceId,
-  fallback,
-  firePerf
-}: SuspensePerfProps): JSX.Element {
+export function SuspenseWithPerf({ children, traceId, fallback, firePerf }: SuspensePerfProps): JSX.Element {
   if (!firePerf) {
     preloadPerformance().then(perf => perf());
   }
