@@ -10,9 +10,9 @@
     "test-dev": "jest --verbose --watch",
     "emulators": "firebase emulators:start --only firestore,database",
     "test": "yarn build && firebase emulators:exec --only firestore,database \"jest --rootDir pub --no-cache --verbose --detectOpenHandles --forceExit\"",
-    "copy-package-json": "cp package.pub.json pub/reactfire/package.json",
+    "copy-package-json": "shx cp package.pub.json pub/reactfire/package.json",
     "watch": "yarn build && tsc --watch",
-    "build": "rm -rf pub && tsc && yarn copy-package-json && cp ../README.md pub/reactfire/README.md && cp ../LICENSE pub/reactfire/LICENSE && rollup -c && node after.build.js && cp ./.npmignore pub/reactfire/ && npm pack ./pub/reactfire"
+    "build": "shx rm -rf pub && tsc && yarn copy-package-json && shx cp ../README.md pub/reactfire/README.md && shx cp ../LICENSE pub/reactfire/LICENSE && rollup -c && node after.build.js && shx cp ./.npmignore pub/reactfire/ && npm pack ./pub/reactfire"
   },
   "repository": {
     "type": "git",
@@ -48,6 +48,7 @@
     "jest": "~24.9.0",
     "react-test-renderer": "^16.9.0",
     "rollup": "^1.26.3",
+    "shx": "^0.3.2",
     "typescript": "^3.4.5"
   },
   "jest": {
