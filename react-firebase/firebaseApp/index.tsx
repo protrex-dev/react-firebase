@@ -35,7 +35,7 @@ function FirebaseAppProvider(props: Props & { [key: string]: unknown }) {
       } else {
         const reactVersion = React.version || 'unknown';
         firebase.registerVersion('react', reactVersion);
-        firebase.registerVersion('@protrex/react-firebase', version);
+        firebase.registerVersion('react-firebase', version);
         return firebase.initializeApp(firebaseConfig, appName);
       }
     }, [firebaseConfig, appName]);
