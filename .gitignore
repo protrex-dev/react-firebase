@@ -1,4 +1,5 @@
 .DS_Store
+.yarn
 npm-debug.log
 
 dist/
