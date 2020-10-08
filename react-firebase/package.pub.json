@@ -19,12 +19,8 @@
     "url": "https://github.com/protrex-dev/react-firebase/issues"
   },
   "homepage": "https://firebaseopensource.com/projects/protrex-dev/react-firebase/",
-  "dependencies": {
-    "rxfire": "^3.6.3",
-    "rxjs": "^6.4.0"
-  },
   "peerDependencies": {
-    "firebase": "^7.0.0",
+    "firebase": "^7.9.1",
     "react": "0.0.0-experimental-5de5b6150"
   }
 }

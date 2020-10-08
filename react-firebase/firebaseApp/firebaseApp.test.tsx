@@ -5,6 +5,8 @@ import '@testing-library/jest-dom/extend-expect';
 import * as React from 'react';
 import { useFirebaseApp, version } from '.';
 import { FirebaseAppProvider } from './index';
+
+// @ts-ignore
 const pkg = require('../package.json');
 
 afterEach(cleanup);

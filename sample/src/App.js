@@ -4,16 +4,7 @@ import FirestoreCounter from './Firestore';
 import Storage from './Storage';
 import RealtimeDatabase from './RealtimeDatabase';
 import RemoteConfig from './RemoteConfig';
-import {
-  preloadFirestoreDoc,
-  useFirebaseApp,
-  preloadUser,
-  preloadAuth,
-  preloadFirestore,
-  preloadDatabase,
-  preloadStorage,
-  preloadRemoteConfig
-} from '@protrex/react-firebase';
+import { useFirebaseApp, preloadAuth, preloadFirestore, preloadDatabase, preloadStorage, preloadRemoteConfig } from '@protrex/react-firebase';
 
 const Fire = () => (
   <span role="img" aria-label="Fire">
@@ -65,14 +56,6 @@ const preloadSDKs = firebaseApp => {
   ]);
 };
 
-const preloadData = async firebaseApp => {
-  const user = await preloadUser(firebaseApp);
-
-  if (user) {
-    preloadFirestoreDoc(firestore => firestore.doc('count/counter'), firebaseApp);
-  }
-};
-
 const App = () => {
   const firebaseApp = useFirebaseApp();
 
@@ -81,7 +64,7 @@ const App = () => {
   //
   // This is OPTIONAL but encouraged as part of the render-as-you-fetch pattern
   // https://reactjs.org/docs/concurrent-mode-suspense.html#approach-3-render-as-you-fetch-using-suspense
-  preloadSDKs(firebaseApp).then(preloadData(firebaseApp));
+  preloadSDKs(firebaseApp);
 
   return (
     <>

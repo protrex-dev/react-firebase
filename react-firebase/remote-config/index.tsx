@@ -1,33 +1,6 @@
 import { useRemoteConfig } from '../firebaseApp';
-import { useObservable } from '../useObservable';
-import { getValue, getString, getBoolean, getNumber, getAll, AllParameters } from './getValue';
-import { Observable } from 'rxjs';
-
-type RemoteConfig = import('firebase/app').remoteConfig.RemoteConfig;
-type RemoteConfigValue = import('firebase/app').remoteConfig.Value;
-type Getter$<T> = (remoteConfig: RemoteConfig, key: string) => Observable<T>;
-
-interface RemoteConfigWithPrivate extends firebase.remoteConfig.RemoteConfig {
-  // This is a private API, assume optional
-  _storage?: { appName: string };
-}
-
-/**
- * Helper function to construct type safe functions. Since Remote Config has
- * methods that return different types for values, we need to be extra safe
- * to make sure we are not returning improper types by accident.
- * @param key
- * @param getter
- * @param remoteConfig
- */
-function typeSafeUse<T>(key: string, getter: Getter$<T>, remoteConfig?: RemoteConfig): T {
-  remoteConfig = remoteConfig || useRemoteConfig();
-  // INVESTIGATE need to use a public API to get at the app name, one doesn't appear to exist...
-  // we might need to iterate over the Firebase apps and check for remoteConfig equality? this works for now
-  const appName = (remoteConfig as RemoteConfigWithPrivate)._storage?.appName;
-  const $value = getter(remoteConfig, key);
-  return useObservable<T>($value, `remoteConfig:${key}:${getter.name}:${appName}`);
-}
+import * as React from 'react';
+import { remoteConfig } from 'firebase/app';
 
 /**
  * Accepts a key and optionally a Remote Config instance. Returns a
@@ -36,8 +9,10 @@ function typeSafeUse<T>(key: string, getter: Getter$<T>, remoteConfig?: RemoteCo
  * @param key The parameter key in Remote Config
  * @param remoteConfig Optional instance. If not provided ReactFirebase will either grab the default instance or lazy load.
  */
-export function useRemoteConfigValue(key: string, remoteConfig?: RemoteConfig): RemoteConfigValue {
-  return typeSafeUse<RemoteConfigValue>(key, getValue, remoteConfig);
+export function useRemoteConfigValue(key: string, remoteConfig?: remoteConfig.RemoteConfig): remoteConfig.Value {
+  remoteConfig = remoteConfig || useRemoteConfig();
+
+  return remoteConfig.getValue(key);
 }
 
 /**
@@ -45,8 +20,10 @@ export function useRemoteConfigValue(key: string, remoteConfig?: RemoteConfig): 
  * @param key The parameter key in Remote Config
  * @param remoteConfig Optional instance. If not provided ReactFirebase will either grab the default instance or lazy load.
  */
-export function useRemoteConfigString(key: string, remoteConfig?: RemoteConfig): string {
-  return typeSafeUse<string>(key, getString, remoteConfig);
+export function useRemoteConfigString(key: string, remoteConfig?: remoteConfig.RemoteConfig): string {
+  remoteConfig = remoteConfig || useRemoteConfig();
+
+  return remoteConfig.getString(key);
 }
 
 /**
@@ -54,8 +31,10 @@ export function useRemoteConfigString(key: string, remoteConfig?: RemoteConfig):
  * @param key The parameter key in Remote Config
  * @param remoteConfig Optional instance. If not provided ReactFirebase will either grab the default instance or lazy load.
  */
-export function useRemoteConfigNumber(key: string, remoteConfig?: RemoteConfig): number {
-  return typeSafeUse<number>(key, getNumber, remoteConfig);
+export function useRemoteConfigNumber(key: string, remoteConfig?: remoteConfig.RemoteConfig): number {
+  remoteConfig = remoteConfig || useRemoteConfig();
+
+  return remoteConfig.getNumber(key);
 }
 
 /**
@@ -63,8 +42,10 @@ export function useRemoteConfigNumber(key: string, remoteConfig?: RemoteConfig):
  * @param key The parameter key in Remote Config
  * @param remoteConfig Optional instance. If not provided ReactFirebase will either grab the default instance or lazy load.
  */
-export function useRemoteConfigBoolean(key: string, remoteConfig?: RemoteConfig) {
-  return typeSafeUse<boolean>(key, getBoolean, remoteConfig);
+export function useRemoteConfigBoolean(key: string, remoteConfig?: remoteConfig.RemoteConfig) {
+  remoteConfig = remoteConfig || useRemoteConfig();
+
+  return remoteConfig.getBoolean(key);
 }
 
 /**
@@ -72,6 +53,13 @@ export function useRemoteConfigBoolean(key: string, remoteConfig?: RemoteConfig)
  * @param key The parameter key in Remote Config
  * @param remoteConfig Optional instance. If not provided ReactFirebase will either grab the default instance or lazy load.
  */
-export function useRemoteConfigAll(key: string, remoteConfig?: RemoteConfig): AllParameters {
-  return typeSafeUse<AllParameters>(key, getAll, remoteConfig);
+export function useRemoteConfigAll(
+  key: string,
+  remoteConfig?: remoteConfig.RemoteConfig
+): {
+  [key: string]: remoteConfig.Value;
+} {
+  remoteConfig = remoteConfig || useRemoteConfig();
+
+  return remoteConfig.getAll();
 }

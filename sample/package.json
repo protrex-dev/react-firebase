@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@types/jest": "^24.9.0",
-    "firebase": "^7.9.1",
+    "firebase": "^7.23.0",
     "js-levenshtein": "^1.1.6",
     "react": "0.0.0-experimental-5de5b6150",
     "react-dom": "0.0.0-experimental-5de5b6150",

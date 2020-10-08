@@ -1,6 +1,6 @@
 import 'firebase/performance';
 import React, { useState, SuspenseList, useTransition } from 'react';
-import { AuthCheck, SuspenseWithPerf, useFirestoreCollectionData, useFirestoreDocData, useFirestoreDocDataOnce, useFirestore } from '@protrex/react-firebase';
+import { AuthCheck, SuspenseWithPerf, useFirestoreCollection, useFirestoreDocument, useFirestore } from '@protrex/react-firebase';
 
 const Counter = props => {
   const firestore = useFirestore;
@@ -15,12 +15,12 @@ const Counter = props => {
     });
   };
 
-  const { value } = useFirestoreDocData(ref);
+  const snapshot = useFirestoreDocument(ref).get();
 
   return (
     <>
       <button onClick={() => increment(-1)}>-</button>
-      <span> {value} </span>
+      <span>{snapshot.data().value}</span>
       <button onClick={() => increment(1)}>+</button>
     </>
   );
@@ -31,9 +31,9 @@ const StaticValue = props => {
 
   const ref = firestore.doc('count/counter');
 
-  const { value } = useFirestoreDocDataOnce(ref);
+  const snapshot = useFirestoreDocument(ref).get();
 
-  return <span>{value}</span>;
+  return <span>{snapshot.data().value}</span>;
 };
 
 const AnimalEntry = ({ saveAnimal }) => {
@@ -59,12 +59,13 @@ const AnimalEntry = ({ saveAnimal }) => {
 };
 
 const List = ({ query, removeAnimal }) => {
-  const animals = useFirestoreCollectionData(query, { idField: 'id' });
+  const snapshot = useFirestoreCollection(query).get();
+
   return (
     <ul>
-      {animals.map(animal => (
-        <li key={animal.id}>
-          {animal.commonName} <button onClick={() => removeAnimal(animal.id)}>X</button>
+      {snapshot.docs.map(doc => (
+        <li key={doc.id}>
+          {doc.data().commonName} <button onClick={() => removeAnimal(doc.id)}>X</button>
         </li>
       ))}
     </ul>

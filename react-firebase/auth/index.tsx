@@ -1,38 +1,19 @@
 import { auth, User } from 'firebase/app';
 import * as React from 'react';
-import { user } from 'rxfire/auth';
-import { preloadAuth, preloadObservable, ReactFirebaseOptions, useAuth, useObservable } from '..';
-import { from } from 'rxjs';
-import { useFirebaseApp } from '../firebaseApp';
-
-export function preloadUser(options?: { firebaseApp?: firebase.app.App }) {
-  const firebaseApp = options?.firebaseApp || useFirebaseApp();
-  return preloadAuth({ firebaseApp }).then(auth => {
-    const result = preloadObservable(user(auth()), `auth:user:${firebaseApp.name}`);
-    return result.toPromise();
-  });
-}
-
-/**
- * Subscribe to Firebase auth state changes, including token refresh
- *
- * @param auth - the [firebase.auth](https://firebase.google.com/docs/reference/js/firebase.auth) object
- * @param options
- */
-export function useUser<T = unknown>(auth?: auth.Auth, options?: ReactFirebaseOptions<T>): User | T {
-  auth = auth || useAuth();
-  const currentUser = auth.currentUser || options?.startWithValue;
-  return useObservable(user(auth), `auth:user:${auth.app.name}`, currentUser);
-}
+import { FirebaseUser, useUser } from './user';
 
 export function useIdTokenResult(user: User, forceRefresh: boolean = false) {
   if (!user) {
     throw new Error('you must provide a user');
   }
 
-  const idToken$ = from(user.getIdTokenResult(forceRefresh));
+  const [idTokenResult, setIdTokenResult] = React.useState<firebase.auth.IdTokenResult>();
 
-  return useObservable<any>(idToken$, `auth:idTokenResult:${user.uid}:forceRefresh=${forceRefresh}`);
+  React.useEffect(() => {
+    user.getIdTokenResult(forceRefresh).then(setIdTokenResult);
+  }, [user, forceRefresh]);
+
+  return idTokenResult;
 }
 
 export interface AuthCheckProps {
@@ -49,7 +30,7 @@ export interface ClaimsCheckProps {
   requiredClaims?: Object;
 }
 
-export function ClaimsCheck({ user, fallback, children, requiredClaims }) {
+export function ClaimsCheck({ user, fallback, children, requiredClaims }: ClaimsCheckProps) {
   const { claims } = useIdTokenResult(user, false);
   const missingClaims = {};
 
@@ -70,11 +51,11 @@ export function ClaimsCheck({ user, fallback, children, requiredClaims }) {
 }
 
 export function AuthCheck({ auth, fallback, children, requiredClaims }: AuthCheckProps): JSX.Element {
-  const user = useUser<User>(auth);
+  const user = useUser(auth);
 
-  if (user) {
+  if (user.value) {
     return requiredClaims ? (
-      <ClaimsCheck user={user} fallback={fallback} requiredClaims={requiredClaims}>
+      <ClaimsCheck user={user.value} fallback={fallback} requiredClaims={requiredClaims}>
         {children}
       </ClaimsCheck>
     ) : (
@@ -84,3 +65,5 @@ export function AuthCheck({ auth, fallback, children, requiredClaims }: AuthChec
     return <>{fallback}</>;
   }
 }
+
+export { FirebaseUser, useUser };

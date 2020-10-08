@@ -1,7 +1,5 @@
-import { useFirebaseApp } from '.';
 import * as firebase from 'firebase/app';
-import { Observable } from 'rxjs';
-import { preloadObservable } from '../useObservable';
+import { useFirebaseApp } from './context';
 
 type ComponentName = 'analytics' | 'auth' | 'database' | 'firestore' | 'functions' | 'messaging' | 'performance' | 'remoteConfig' | 'storage';
 
@@ -9,6 +7,18 @@ type ValueOf<T> = T[keyof T];
 type App = firebase.app.App;
 type FirebaseInstanceFactory = ValueOf<Pick<App, ComponentName>>;
 type FirebaseNamespaceComponent = ValueOf<Pick<typeof firebase, ComponentName>>;
+
+const _components: Map<string, Map<string, Component>> = globalThis['__react-firebase_components'] || (globalThis['__react-firebase_components'] = new Map());
+
+function getComponents(appName: string) {
+  let components = _components.get(appName);
+
+  if (!components) {
+    _components.set(appName, (components = new Map()));
+  }
+
+  return components;
+}
 
 function importSDK(sdk: ComponentName) {
   switch (sdk) {
@@ -44,23 +54,33 @@ function proxyComponent(componentName: 'remoteConfig'): typeof firebase.remoteCo
 function proxyComponent(componentName: 'storage'): typeof firebase.storage;
 function proxyComponent(componentName: ComponentName): FirebaseNamespaceComponent {
   let contextualApp: App | undefined;
+
   const useComponent = (app?: App) => {
     contextualApp = useFirebaseApp();
-    const sdkSubject = preload(componentName, app || contextualApp);
-    if (!sdkSubject.hasValue) {
-      throw sdkSubject.firstEmission;
+
+    const component = preload(componentName, app);
+
+    if (component.loading) {
+      throw component.promise;
     }
-    sdkSubject.value; // get value to throw if there's an error
+
+    if (component.error) {
+      throw component.error;
+    }
+
     return firebase[componentName];
   };
+
   return new Proxy(useComponent, {
     get: (target, p) => target()[p],
     apply: (target, _this, args) => {
       const component = target(args[0]).bind(_this);
+
       // If they don't pass an app, assume the app in context rather than [DEFAULT]
       if (!args[0]) {
         args[0] = contextualApp;
       }
+
       return component(...args);
     }
   }) as any;
@@ -86,43 +106,83 @@ export const performance = usePerformance;
 export const remoteConfig = useRemoteConfig;
 export const storage = useStorage;
 
+class Component<T = unknown> {
+  error: any;
+  instanceFactory: T;
+  loading: boolean = true;
+  promise: Promise<void> | null = null;
+
+  constructor(promise: Promise<void>) {
+    this.promise = promise;
+
+    // Listen for result
+    this.promise.then(
+      () => {
+        this.loading = false;
+      },
+      error => {
+        this.error = error;
+        this.loading = false;
+      }
+    );
+  }
+
+  then(onFulfilled, onRejected?) {
+    return this.promise.then(() => onFulfilled(this.instanceFactory), onRejected);
+  }
+}
+
 export type PreloadOptions<T> = {
   firebaseApp?: App;
   setup?: (instanceFactory: T) => void | Promise<any>;
 };
 
-function preloadFactory(componentName: 'auth'): (options?: PreloadOptions<App['auth']>) => Promise<App['auth']>;
-function preloadFactory(componentName: 'analytics'): (options?: PreloadOptions<App['analytics']>) => Promise<App['analytics']>;
-function preloadFactory(componentName: 'database'): (options?: PreloadOptions<App['database']>) => Promise<App['database']>;
-function preloadFactory(componentName: 'firestore'): (options?: PreloadOptions<App['firestore']>) => Promise<App['firestore']>;
-function preloadFactory(componentName: 'functions'): (options?: PreloadOptions<App['functions']>) => Promise<App['functions']>;
-function preloadFactory(componentName: 'messaging'): (options?: PreloadOptions<App['messaging']>) => Promise<App['messaging']>;
-function preloadFactory(componentName: 'performance'): (options?: PreloadOptions<App['performance']>) => Promise<App['performance']>;
-function preloadFactory(componentName: 'remoteConfig'): (options?: PreloadOptions<App['remoteConfig']>) => Promise<App['remoteConfig']>;
-function preloadFactory(componentName: 'storage'): (options?: PreloadOptions<App['storage']>) => Promise<App['storage']>;
+function preloadFactory(componentName: 'auth'): (options?: PreloadOptions<App['auth']>) => Component<App['auth']>;
+function preloadFactory(componentName: 'analytics'): (options?: PreloadOptions<App['analytics']>) => Component<App['analytics']>;
+function preloadFactory(componentName: 'database'): (options?: PreloadOptions<App['database']>) => Component<App['database']>;
+function preloadFactory(componentName: 'firestore'): (options?: PreloadOptions<App['firestore']>) => Component<App['firestore']>;
+function preloadFactory(componentName: 'functions'): (options?: PreloadOptions<App['functions']>) => Component<App['functions']>;
+function preloadFactory(componentName: 'messaging'): (options?: PreloadOptions<App['messaging']>) => Component<App['messaging']>;
+function preloadFactory(componentName: 'performance'): (options?: PreloadOptions<App['performance']>) => Component<App['performance']>;
+function preloadFactory(componentName: 'remoteConfig'): (options?: PreloadOptions<App['remoteConfig']>) => Component<App['remoteConfig']>;
+function preloadFactory(componentName: 'storage'): (options?: PreloadOptions<App['storage']>) => Component<App['storage']>;
 function preloadFactory(componentName: ComponentName) {
-  return (options?: PreloadOptions<FirebaseInstanceFactory>) => preload(componentName, options?.firebaseApp, options?.setup).toPromise();
+  return (options?: PreloadOptions<FirebaseInstanceFactory>) => preload(componentName, options?.firebaseApp, options?.setup);
 }
 
-function preload(componentName: ComponentName, firebaseApp?: App, settingsCallback: (instanceFactory: FirebaseInstanceFactory) => any = () => {}) {
+function preload<T>(
+  componentName: ComponentName,
+  firebaseApp?: App,
+  settingsCallback: (instanceFactory: FirebaseInstanceFactory) => any = () => {}
+): Component<T> {
   const app = firebaseApp || useFirebaseApp();
-  return preloadObservable(
-    new Observable(emitter => {
-      importSDK(componentName)
-        .then(() => {
-          const instanceFactory: FirebaseInstanceFactory = app[componentName].bind(app);
-          Promise.resolve(settingsCallback(instanceFactory)).then(() => {
-            emitter.next(instanceFactory);
-            emitter.complete();
-          });
-        })
-        .catch(e => {
-          emitter.error(e);
-          emitter.complete();
+
+  // Retrieve components
+  const components = getComponents(app.name);
+
+  // Retrieve component
+  let component = components.get(componentName);
+
+  if (component) {
+    return component as Component<T>;
+  }
+
+  // Initialize component
+  components.set(
+    componentName,
+    (component = new Component(
+      importSDK(componentName).then(() => {
+        const instanceFactory: FirebaseInstanceFactory = app[componentName].bind(app);
+
+        // Apply settings
+        return Promise.resolve(settingsCallback(instanceFactory)).then(() => {
+          component.instanceFactory = instanceFactory;
         });
-    }),
-    `firebase-sdk:${componentName}:${app.name}`
+      })
+    ))
   );
+
+  return component as Component<T>;
 }
 
 export const preloadAuth = preloadFactory('auth');

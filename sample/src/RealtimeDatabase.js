@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AuthCheck, SuspenseWithPerf, useDatabaseObjectData, useDatabase, useDatabaseListData } from '@protrex/react-firebase';
+import { AuthCheck, SuspenseWithPerf, useDatabaseObject, useDatabase, useDatabaseList } from '@protrex/react-firebase';
 
 const Counter = props => {
   const database = useDatabase();
@@ -10,12 +10,12 @@ const Counter = props => {
     });
   };
 
-  const count = useDatabaseObjectData(ref);
+  const snapshot = useDatabaseObject(ref).get();
 
   return (
     <>
       <button onClick={() => increment(-1)}>-</button>
-      <span> {count} </span>
+      <span> {snapshot.val()} </span>
       <button onClick={() => increment(1)}>+</button>
     </>
   );
@@ -46,7 +46,7 @@ const AnimalEntry = ({ saveAnimal }) => {
 const List = props => {
   const database = useDatabase();
   const ref = database.ref('animals');
-  const animals = useDatabaseListData(ref, { idField: 'id' });
+  const animals = useDatabaseList(ref);
 
   const addNewAnimal = commonName => {
     const newAnimalRef = ref.push();
@@ -77,8 +77,8 @@ const SuspenseWrapper = props => {
       <AuthCheck fallback="sign in to use Realtime Database">
         <h3>Sample Object Listener</h3>
         <Counter />
-        <h3>Sample List Listener</h3>
-        <List />
+        {/*<h3>Sample List Listener</h3>*/}
+        {/*<List />*/}
       </AuthCheck>
     </SuspenseWithPerf>
   );

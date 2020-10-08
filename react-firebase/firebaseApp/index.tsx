@@ -1,12 +1,9 @@
 import * as firebase from 'firebase/app';
 import * as React from 'react';
-
-type FirebaseAppContextValue = firebase.app.App;
+import { FirebaseAppContext, useFirebaseApp } from './context';
 
 // INVESTIGATE I don't like magic strings, can we have export this in js-sdk?
 const DEFAULT_APP_NAME = '[DEFAULT]';
-
-const FirebaseAppContext = React.createContext<FirebaseAppContextValue | undefined>(undefined);
 
 type Props = {
   firebaseApp?: firebase.app.App;
@@ -22,6 +19,7 @@ const shallowEq = (a: Object, b: Object) => a == b || [...Object.keys(a), ...Obj
 
 function FirebaseAppProvider(props: Props & { [key: string]: unknown }) {
   const { firebaseConfig, appName } = props;
+
   const firebaseApp: firebase.app.App =
     props.firebaseApp ||
     React.useMemo(() => {
@@ -41,15 +39,6 @@ function FirebaseAppProvider(props: Props & { [key: string]: unknown }) {
     }, [firebaseConfig, appName]);
 
   return <FirebaseAppContext.Provider value={firebaseApp} {...props} />;
-}
-
-function useFirebaseApp() {
-  const firebaseApp = React.useContext(FirebaseAppContext);
-  if (!firebaseApp) {
-    throw new Error('Cannot call useFirebaseApp unless your component is within a FirebaseAppProvider');
-  }
-
-  return firebaseApp;
 }
 
 export * from './sdk';

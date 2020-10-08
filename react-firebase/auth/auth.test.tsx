@@ -1,15 +1,15 @@
-import { cleanup, render, waitForElement, wait } from '@testing-library/react';
-import { auth, User } from 'firebase/app';
+import { cleanup, render, wait } from '@testing-library/react';
+import { auth } from 'firebase/app';
 import '@testing-library/jest-dom/extend-expect';
 import * as React from 'react';
 import { AuthCheck, useUser } from '.';
-import { FirebaseAppProvider } from '..';
-import { Observable, Observer } from 'rxjs';
 import { act } from 'react-dom/test-utils';
+import { FirebaseAppProvider } from '../firebaseApp';
 
 class MockAuth {
   user: Object | null;
-  subscriber: Observer<any> | null;
+  subscriber: (user: Object) => void | null;
+
   constructor() {
     this.user = null;
     this.subscriber = null;
@@ -21,13 +21,18 @@ class MockAuth {
 
   notifySubscriber() {
     if (this.subscriber) {
-      this.subscriber.next(this.user);
+      this.subscriber(this.user);
     }
   }
 
   onIdTokenChanged(s) {
     this.subscriber = s;
-    this.notifySubscriber();
+
+    setTimeout(() => {
+      this.notifySubscriber();
+    }, 100);
+
+    return () => (this.subscriber = null);
   }
 
   updateUser(u: Object) {
@@ -84,15 +89,16 @@ describe('AuthCheck', () => {
   it('renders the fallback if a user is not signed in', async () => {
     const { getByTestId } = render(<Component />);
 
-    await wait(() => expect(getByTestId('signed-out')).toBeInTheDocument());
+    await wait(() => expect(getByTestId('signed-out')).toBeInTheDocument(), { timeout: 2000 });
 
     act(() => mockFirebase.auth().updateUser({ uid: 'testuser' }));
 
-    await wait(() => expect(getByTestId('signed-in')).toBeInTheDocument());
+    await wait(() => expect(getByTestId('signed-in')).toBeInTheDocument(), { timeout: 2000 });
   });
 
   it('renders children if a user is logged in', async () => {
     act(() => mockFirebase.auth().updateUser({ uid: 'testuser' }));
+
     const { getByTestId } = render(<Component />);
 
     await wait(() => expect(getByTestId('signed-in')).toBeInTheDocument());
@@ -118,7 +124,7 @@ describe('AuthCheck', () => {
 describe('useUser', () => {
   it('always returns a user if inside an <AuthCheck> component', () => {
     const UserDetails = () => {
-      const user = useUser();
+      const user = useUser().get();
 
       expect(user).not.toBeNull();
       expect(user).toBeDefined();
