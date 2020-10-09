@@ -38,6 +38,10 @@ function FirebaseAppProvider(props: Props & { [key: string]: unknown }) {
       }
     }, [firebaseConfig, appName]);
 
+  firebaseApp['__react-firebase'] = {
+      cache: {}
+  };
+
   return <FirebaseAppContext.Provider value={firebaseApp} {...props} />;
 }
 

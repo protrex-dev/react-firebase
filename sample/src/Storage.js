@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { SuspenseWithPerf, useStorageTask, AuthCheck, StorageImage, useStorage } from '@protrex/react-firebase';
+import { SuspenseWithPerf, useStorageUploadTask, AuthCheck, StorageImage, useStorage } from '@protrex/react-firebase';
 
 const UploadProgress = ({ uploadTask, storageRef }) => {
-  const { bytesTransferred, totalBytes } = useStorageTask(uploadTask, storageRef);
+  const { bytesTransferred, totalBytes } = useStorageUploadTask(uploadTask, storageRef);
 
   const percentComplete = Math.round(100 * (bytesTransferred / totalBytes)) + '%';
 
