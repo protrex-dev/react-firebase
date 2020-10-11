@@ -1,5 +1,5 @@
 import { cleanup, render, wait } from '@testing-library/react';
-import { auth } from 'firebase/app';
+import { app, auth } from 'firebase/app';
 import '@testing-library/jest-dom/extend-expect';
 import * as React from 'react';
 import { AuthCheck, useUser } from '.';
@@ -7,17 +7,16 @@ import { act } from 'react-dom/test-utils';
 import { FirebaseAppProvider } from '../firebaseApp';
 
 class MockAuth {
+  app: app.App;
   user: Object | null;
   subscriber: (user: Object) => void | null;
 
-  constructor() {
+  constructor(app) {
+    this.app = app;
+
     this.user = null;
     this.subscriber = null;
   }
-
-  app = {
-    name: '[DEFAULT]'
-  };
 
   notifySubscriber() {
     if (this.subscriber) {
@@ -41,11 +40,15 @@ class MockAuth {
   }
 }
 
-const mockAuth = new MockAuth();
+class MockFirebase {
+  name: string = '[DEFAULT]';
+  auth: () => MockAuth;
+}
 
-const mockFirebase = {
-  auth: () => mockAuth
-};
+const mockFirebase = new MockFirebase();
+const mockAuth = new MockAuth(mockFirebase);
+
+mockFirebase.auth = () => mockAuth;
 
 const Provider = ({ children }) => <FirebaseAppProvider firebaseApp={(mockFirebase as any) as firebase.app.App}>{children}</FirebaseAppProvider>;
 
@@ -124,7 +127,7 @@ describe('AuthCheck', () => {
 describe('useUser', () => {
   it('always returns a user if inside an <AuthCheck> component', () => {
     const UserDetails = () => {
-      const user = useUser().get();
+      const user = useUser();
 
       expect(user).not.toBeNull();
       expect(user).toBeDefined();

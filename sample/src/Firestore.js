@@ -15,7 +15,7 @@ const Counter = props => {
     });
   };
 
-  const snapshot = useFirestoreDocument(ref).get();
+  const snapshot = useFirestoreDocument(ref);
 
   return (
     <>
@@ -31,7 +31,7 @@ const StaticValue = props => {
 
   const ref = firestore.doc('count/counter');
 
-  const snapshot = useFirestoreDocument(ref).get();
+  const snapshot = useFirestoreDocument(ref);
 
   return <span>{snapshot.data().value}</span>;
 };
@@ -59,7 +59,7 @@ const AnimalEntry = ({ saveAnimal }) => {
 };
 
 const List = ({ query, removeAnimal }) => {
-  const snapshot = useFirestoreCollection(query).get();
+  const snapshot = useFirestoreCollection(query);
 
   return (
     <ul>

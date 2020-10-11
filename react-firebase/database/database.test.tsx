@@ -47,7 +47,7 @@ describe('Realtime Database (RTDB)', () => {
       await ref.set(mockData);
 
       const ReadObject = () => {
-        const snapshot = useDatabaseObject(ref).get();
+        const snapshot = useDatabaseObject(ref);
 
         return <h1 data-testid="readSuccess">{snapshot.val().a}</h1>;
       };

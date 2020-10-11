@@ -11,10 +11,9 @@ import {useTask} from "../core/task";
  * @param options
  */
 export function useStorageDownloadURL<T = string>(ref: storage.Reference, options?: ReactFirebaseOptions<string>): string {
-  return useTask<string>({
+  return useTask<string>(ref.fullPath, {
     type: 'useStorageDownloadURL',
-    id: ref.fullPath,
 
     resolve: () => ref.getDownloadURL()
-  });
+  }).get();
 }

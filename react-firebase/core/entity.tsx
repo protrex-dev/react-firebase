@@ -1,4 +1,6 @@
 import { Observer } from './observer';
+import {useCacheValue} from "./cache";
+import { app } from "firebase";
 
 type GetFn<T> = () => Promise<T>;
 type NextFn<T> = (value: T) => void;
@@ -8,14 +10,21 @@ type CompleteFn = () => void;
 type SubscribeFunction<T> = (next: NextFn<T>, error?: ErrorFn<any>, complete?: CompleteFn) => UnsubscribeFunction;
 
 export type EntityOptions<T> = {
-  current?: T | null;
+  type: string;
+  subscribe: SubscribeFunction<T>;
+
+  app?: app.App;
+  initialValue?: T | null;
   error?: Error | null;
   get?: GetFn<T>;
   observers?: Observer<T>[] | null;
   promise?: Promise<void> | null;
-  subscribe: SubscribeFunction<T>;
   unsubscribe?: UnsubscribeFunction | null;
 };
+
+export type EntityGetOptions = {
+  wait?: boolean;
+}
 
 type UnsubscribeFunction = () => void;
 
@@ -23,15 +32,16 @@ export default class Entity<T> {
   private readonly getFn: GetFn<T>;
   private readonly observers: Observer<T>[] = [];
   private readonly subscribeFn: SubscribeFunction<T> = null;
+  private readonly wait: boolean;
 
   private error: any = null;
   private promise: Promise<void> | null = null;
   private unsubscribeFn: UnsubscribeFunction = null;
 
-  private current: T;
+  value: T;
 
   constructor(options: EntityOptions<T>) {
-    this.current = options.current;
+    this.value = options.initialValue;
     this.error = options.error || null;
     this.getFn = options.get || null;
     this.observers = options.observers || [];
@@ -40,55 +50,32 @@ export default class Entity<T> {
     this.unsubscribeFn = options.unsubscribe || null;
   }
 
-  get value(): T {
-    return this.current;
-  }
+  get(options?: EntityGetOptions): T {
+    options = options || {};
 
-  copyWith(options: EntityOptions<T>): Entity<T> {
-    throw new Error('Not Implemented');
-  }
+    const wait = typeof options.wait !== 'undefined' ? options.wait : true;
 
-  copyWithValue(value: T) {
-    return this.copyWith({
-      current: value,
-      error: this.error,
-      get: this.getFn,
-      observers: this.observers,
-      promise: this.promise,
-      subscribe: this.subscribeFn,
-      unsubscribe: this.unsubscribeFn
-    } as EntityOptions<T>);
-  }
-
-  effect(dispatch: (value: Entity<T>) => void) {
-    return this.on(value => {
-      dispatch(this.copyWithValue(value));
-    });
-  }
-
-  get(): T {
     if (this.error) {
       throw this.error;
     }
 
-    if (typeof this.current !== 'undefined') {
-      return this.current;
-    }
+    if(typeof this.value === 'undefined' && wait) {
+      if(!this.promise) {
+        this.promise = (this.getFn ? this.getFn() : this.first()).then(
+            value => {
+              this.value = value;
+              this.dispatchNext(value);
+            },
+            err => {
+              this.dispatchError(err);
+            }
+        );
+      }
 
-    if (this.promise) {
       throw this.promise;
     }
 
-    throw (this.promise = (this.getFn ? this.getFn() : this.first()).then(
-      value => {
-        this.current = value;
-
-        this.dispatchNext(value);
-      },
-      err => {
-        this.dispatchError(err);
-      }
-    ));
+    return this.value;
   }
 
   on(nextOrObserver: Observer<T> | NextFn<T>, error?: ErrorFn, complete?: CompleteFn): UnsubscribeFunction {
@@ -183,4 +170,11 @@ export default class Entity<T> {
     // Subscribe to token changes
     this.unsubscribeFn = this.subscribeFn(this.dispatchNext.bind(this));
   }
+}
+
+export function useEntity<T>(id: any, options: EntityOptions<T>): Entity<T> {
+  return useCacheValue<any, Entity<T>>(id, () => new Entity<T>(options), {
+    app: options.app,
+    type: options.type
+  });
 }

@@ -1,6 +1,6 @@
 import { auth, User } from 'firebase/app';
 import * as React from 'react';
-import { FirebaseUser, useUser } from './user';
+import { useUser } from './user';
 
 export function useIdTokenResult(user: User, forceRefresh: boolean = false) {
   if (!user) {
@@ -51,11 +51,14 @@ export function ClaimsCheck({ user, fallback, children, requiredClaims }: Claims
 }
 
 export function AuthCheck({ auth, fallback, children, requiredClaims }: AuthCheckProps): JSX.Element {
-  const user = useUser(auth);
+  const user = useUser({
+    wait: false,
+    auth
+  });
 
-  if (user.value) {
+  if (user) {
     return requiredClaims ? (
-      <ClaimsCheck user={user.value} fallback={fallback} requiredClaims={requiredClaims}>
+      <ClaimsCheck user={user} fallback={fallback} requiredClaims={requiredClaims}>
         {children}
       </ClaimsCheck>
     ) : (
@@ -66,4 +69,4 @@ export function AuthCheck({ auth, fallback, children, requiredClaims }: AuthChec
   }
 }
 
-export { FirebaseUser, useUser };
+export { useUser };

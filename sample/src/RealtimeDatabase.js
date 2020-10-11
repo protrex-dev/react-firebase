@@ -10,7 +10,7 @@ const Counter = props => {
     });
   };
 
-  const snapshot = useDatabaseObject(ref).get();
+  const snapshot = useDatabaseObject(ref);
 
   return (
     <>

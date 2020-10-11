@@ -37,7 +37,7 @@ const SignInForm = () => {
 };
 
 const FirebaseAuthStateButton = () => {
-  const user = useUser().get();
+  const user = useUser();
 
   return user ? <UserDetails user={user} /> : <SignInForm />;
 };
