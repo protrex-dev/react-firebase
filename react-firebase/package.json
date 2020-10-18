@@ -1,6 +1,6 @@
 {
   "name": "@protrex/react-firebase-dev",
-  "version": "3.0.0-beta.3",
+  "version": "3.0.0-beta.4",
   "description": "Firebase library for React",
   "main": "index.js",
   "types": "index.d.ts",
