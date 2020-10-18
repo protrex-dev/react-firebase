@@ -56,11 +56,11 @@ cd myapp
 > Ignore yarn/npm warnings.
 
 ```bash
-yarn add firebase react-firebase
+yarn add @protrex/react-firebase firebase
 
 # or
 
-npm install --save firebase react-firebase
+npm install --save @protrex/react-firebase firebase
 ```
 
 ## 4. Register your app with Firebase

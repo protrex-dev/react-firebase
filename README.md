@@ -28,12 +28,12 @@ available in
 
 ```bash
 # npm
-npm install --save react-firebase firebase
+npm install --save @protrex/react-firebase firebase
 
 # or
 
 # yarn
-yarn add react-firebase firebase
+yarn add @protrex/react-firebase firebase
 ```
 
 Depending on your targeted platforms you may need to install polyfills. The most commonly needed will be [globalThis](https://caniuse.com/#search=globalThis) and [Proxy](https://caniuse.com/#search=Proxy).
