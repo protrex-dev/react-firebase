@@ -23,7 +23,7 @@
   "bugs": {
     "url": "https://github.com/protrex-dev/react-firebase/issues"
   },
-  "homepage": "https://firebaseopensource.com/projects/firebase/react-firebase/",
+  "homepage": "https://github.com/protrex-dev/react-firebase",
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.4.3",

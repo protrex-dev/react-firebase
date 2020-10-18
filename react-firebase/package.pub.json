@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/protrex-dev/react-firebase/issues"
   },
-  "homepage": "https://firebaseopensource.com/projects/protrex-dev/react-firebase/",
+  "homepage": "https://github.com/protrex-dev/react-firebase",
   "peerDependencies": {
     "firebase": "^7.9.1",
     "react": "0.0.0-experimental-5de5b6150"
