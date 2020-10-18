@@ -46,7 +46,7 @@ script:
 - yarn test
 
 before_deploy:
-- cd react-firebase/pub/react-firebase
+- cd pub/react-firebase
 - cp ../../../README.md .
 - cp -r ../../../docs .
 - cp ../../../LICENSE .
