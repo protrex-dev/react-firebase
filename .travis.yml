@@ -6,46 +6,62 @@ addons:
   apt:
     update: true
     packages:
-      - default-jre
-      - default-jdk
-      - build-essential
-      - python2.7
+    - default-jre
+    - default-jdk
+    - build-essential
+    - python2.7
 
 cache:
   yarn: true
 
 env:
-  - CANARY=false
-  - CANARY=true
+- CANARY=false
+- CANARY=true
 
 matrix:
   fast_finish: true
   allow_failures:
-    - env: CANARY=true
+  - env: CANARY=true
 
 branches:
   only:
-    - master
-    - develop
+  - master
+  - develop
 
 before_install:
-  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.15.2
-  - export PATH=$HOME/.yarn/bin:$PATH
+- curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.15.2
+- export PATH=$HOME/.yarn/bin:$PATH
 
 install:
-  - |
-    if $CANARY; then
-      yarn upgrade && yarn add firebase@canary
+- |
+  if $CANARY; then
+    yarn upgrade && yarn add firebase@canary
+  else
+    if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
+      yarn upgrade
     else
-      if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
-        yarn upgrade
-      else
-        yarn install --frozen-lockfile
-      fi
+      yarn install --frozen-lockfile
     fi
-  - yarn global add firebase-tools
-  - firebase setup:emulators:firestore
+  fi
+- yarn global add firebase-tools
+- firebase setup:emulators:firestore
 
 script:
-  - cd react-firebase
-  - yarn test
+- cd react-firebase
+- yarn test
+
+before_deploy:
+- cd react-firebase/pub/react-firebase
+- cp ../../../README.md .
+- cp -r ../../../docs .
+- cp ../../../LICENSE .
+
+deploy:
+  provider: npm
+  skip_cleanup: true
+  email: ci@protrex.org
+  api_key:
+    secure: pV5OGYLSG/LzVGtPE6a0ABOQUR0MihDVGbGr7HAmi+dJrOxfapXI3r7l+fB1d3EXkQuCtQ3Qt4BrDr7bx021565cJ74NnJoPhvueyhoSFNO4HvCXBwtfX21Yl1TqqTjun8w13WfcVJ930m3uu/4+bXdzLk86q+kOQqCOW6MpNX/keN/2yjLpblRMpo+QPI0n9+K4gvqrwau7whTmm7EGu6U0T0y7c7aMgKOTgbhnPbSkHZE6tSyZ4/NhlcbT/rROZoR61mTKwqJCKvBTeOdwJaEp33LMPtgMF64P0bHl+o4mtuKr4wpgg2kBNAeJka75xnqoZwNHW4azf8qBPJx5W8NIrZrmEOi4R6FV+p+0jEV+rvVfjckCOvfJ3qUCFzZ8tP2LKAQUJHZLXF3xiICjhZwbQjFr0l3JPA3c3JNja0/IKZzrHFuXt6bAsL1v4Z34mE44xvHVPdAt9Ueuo+WwV4E9k55O+syG8Qf4v4lbHqlvUVH/mrmG94ejW7NcABrJhRX5fwwWsIT8xEM0/bj5LDB4YFNAWRSrEpw7oug0+DlP+uVSY0ws4YBTH7VGL9f9Jr3aqHFIyrd3kruFG6EMjxjIaFxpagYvQdXFu9qYJxbnnpSTUV61qwbj2XRJzSegb9Y0SCMrzX8cx3uA1/4+Ck0p1lgy9nhLMNEVW62STxg=
+  on:
+    tags: true
+    repo: protrex-dev/react-firebase
